@@ -1,25 +1,19 @@
 [CmdletBinding()]
 Param(
     [Parameter(Mandatory=$false)] # Parametro opcional que define o tempo de inatividade em segundos
-    [int]$IDLETIME = 3,
-
-    [Switch]$Debug # Parametro opcional que habilita a saida verbose para fins de depuracao
+    [int]$IDLETIME = 3
 )
+Add-Type -AssemblyName System.Windows.Forms
+
 
 $VerbosePreference = "SilentlyContinue" # Define a preferência de saida verbose como SilentlyContinue
-if ($Debug) {
+
+if ($PSBoundParameters.ContainsKey('Debug')) {
     $VerbosePreference = "Continue" # Se o parametro Debug estiver definido, define a preferência de saida verbose como Continue
 }
 
-
-# Define o caminho e o nome do arquivo de log
-if ([string]::IsNullOrEmpty($MyInvocation.Line)) {
-  # Script está sendo executado a partir do arquivo .ps1
-  $LogPath = Join-Path $pwd "MouseMover_$((Get-Date).ToString('yyyyMMdd_HHmmss')).log"
-} else {
-  # Script está sendo executado a partir do instalador NSIS
-  $LogPath = Join-Path $env:INSTDIR "MouseMover_$((Get-Date).ToString('yyyyMMdd_HHmmss')).log"
-}
+# Script está sendo executado a partir do arquivo .ps1
+$LogPath = Join-Path $pwd "MouseMover_$((Get-Date).ToString('yyyyMMdd_HHmmss')).log"
 # Cria o arquivo de log se não existir
 if (!(Test-Path $LogPath)) {
   New-Item -ItemType File -Path $LogPath | Out-Null
@@ -49,9 +43,6 @@ Add-Type @"
         public int Y;
     }
 "@
-
-# Define o tempo de ociosidade (inatividade) para considerar que o mouse esta parado.
-$IDLETIME = 3
 
 # Define um tamanho de movimento inicial aleatorio entre 1 e 200 pixels.
 $MOVEMENTSIZE = Get-Random -Minimum 1 -Maximum 200
@@ -110,7 +101,7 @@ while ($true) {
     Start-Sleep -Seconds $IDLETIME
     # Aguarda por mais $IDLETIME segundos antes de fazer a proxima verificacao
   } else {
-    $IDLETIME = 3
+    $IDLETIME = $IDLETIME
     Write-Verbose "Mouse ativo em X = $($point.X), Y = $($point.Y), aguardando $IDLETIME segundos."
     $logFile.WriteLine("$((Get-Date).ToString('yyyy-MM-dd HH:mm:ss')): Mouse ativo em X = $($point.X), Y = $($point.Y), aguardando $IDLETIME segundos.")
     $logFile.Flush()

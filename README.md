@@ -6,7 +6,7 @@ O MouseMover é um script PowerShell que simula um movimento mínimo do mouse qu
 
 ### Passo 1: Download
 
-Baixe o script [MouseMover.ps1](MouseMover.ps1) em seu computador.
+Baixe o script [MouseMover.ps1](https://github.com/nicolasaigner/move-mouse-windows) em seu computador.
 
 ### Passo 2: Executar
 
